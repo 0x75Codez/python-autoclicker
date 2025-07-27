@@ -19,5 +19,5 @@ A modern, customizable AutoClicker built with Python featuring a sleek GUI.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/0x75Codez/auto-clicker.git
+git clone https://github.com/0x75Codez/python-autoclicker.git
 cd auto-clicker
