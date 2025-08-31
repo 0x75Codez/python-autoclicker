@@ -8,13 +8,11 @@ import platform
 from ttkthemes import ThemedTk
 import random
 
-# Global state
 spamming = False
 
 kb_controller = keyboard.Controller()
 mouse_controller = mouse.Controller()
 
-# Constants for colors and fonts
 DARK_BG = '#121212'
 PRIMARY_RED = '#e53935'
 TEXT_COLOR = '#eeeeee'
@@ -23,7 +21,6 @@ GREY_DARK = '#1b1b1b'
 FONT_NAME = 'Segoe UI'
 FONT_SIZE = 11
 
-# Tooltip utility
 class CreateToolTip(object):
     def __init__(self, widget, text):
         self.widget = widget
@@ -81,7 +78,6 @@ class MacroClickerApp(ThemedTk):
         self.configure(bg=DARK_BG)
         self.attributes("-topmost", True)
         
-        # Dark title bar on Windows 10/11
         if platform.system() == "Windows":
             try:
                 import ctypes
@@ -94,10 +90,7 @@ class MacroClickerApp(ThemedTk):
 
         self.style = ttk.Style(self)
         self.style.theme_use("black")
-
-        # Label style
         self.style.configure('TLabel', background=DARK_BG, foreground=TEXT_COLOR, font=(FONT_NAME, FONT_SIZE))
-        # Button style with red background and no border
         self.style.configure('TButton',
                              font=(FONT_NAME, FONT_SIZE, 'bold'),
                              foreground=TEXT_COLOR,
@@ -107,12 +100,10 @@ class MacroClickerApp(ThemedTk):
                              focuscolor='none')
         self.style.map('TButton',
                        background=[('active', '#b71c1c'), ('disabled', '#4a0000')])
-        # Entry style
         self.style.configure('TEntry',
                              fieldbackground=GREY_BG,
                              foreground=TEXT_COLOR,
                              bordercolor=GREY_DARK)
-        # Combobox style with black dropdown and white text
         self.style.configure('TCombobox',
                              fieldbackground=GREY_BG,
                              background=GREY_BG,
@@ -125,14 +116,11 @@ class MacroClickerApp(ThemedTk):
                        fieldbackground=[('readonly', GREY_BG)],
                        background=[('readonly', GREY_BG)],
                        foreground=[('readonly', TEXT_COLOR)])
-        # Checkbutton style
         self.style.configure('TCheckbutton', background=DARK_BG, foreground=TEXT_COLOR)
-        # Set dropdown listbox colors globally
         self.option_add('*TCombobox*Listbox.background', GREY_BG)
         self.option_add('*TCombobox*Listbox.foreground', TEXT_COLOR)
         self.option_add('*TCombobox*Listbox.selectBackground', PRIMARY_RED)
         self.option_add('*TCombobox*Listbox.selectForeground', TEXT_COLOR)
-
         self.option_add('*TCombobox*Listbox.font', (FONT_NAME, FONT_SIZE))
 
         self.input_mode = tk.StringVar(value="Keyboard")
@@ -152,7 +140,6 @@ class MacroClickerApp(ThemedTk):
 
         self.create_widgets()
         self.bind_hotkeys()
-
         self.after(100, self.update_counter)
 
     def create_widgets(self):
@@ -164,7 +151,6 @@ class MacroClickerApp(ThemedTk):
         mode_combo.bind("<<ComboboxSelected>>", self.on_mode_change)
 
         ttk.Label(self, text="Key(s) or Mouse Button(s) to Spam:").grid(row=1, column=0, sticky="w", **padding)
-
         self.key_entry = ttk.Entry(self, textvariable=self.key_sequence)
         self.key_entry.grid(row=1, column=1, sticky="ew", **padding)
 
@@ -187,7 +173,6 @@ class MacroClickerApp(ThemedTk):
         self.random_delay_check = ttk.Checkbutton(self, text="Randomize delay ±10ms", variable=self.random_delay_mode)
         self.random_delay_check.grid(row=3, column=0, columnspan=2, sticky="w", **padding)
 
-        # Burst Inputs and Pause Labels/Entries (store original grid info for restoring)
         self.burst_label = ttk.Label(self, text="Inputs Per Burst:")
         self.burst_label.grid(row=4, column=0, sticky="w", **padding)
         self.burst_entry = ttk.Entry(self, textvariable=self.inputs_per_burst)
@@ -216,7 +201,6 @@ class MacroClickerApp(ThemedTk):
         self.counter_label = ttk.Label(self, text="Inputs Sent: 0")
         self.counter_label.grid(row=9, column=0, columnspan=2, sticky="w", **padding)
 
-        # Buttons frame
         btn_frame = ttk.Frame(self)
         btn_frame.grid(row=10, column=0, columnspan=2, sticky="ew", **padding)
         btn_frame.columnconfigure((0, 1, 2), weight=1)
@@ -230,25 +214,21 @@ class MacroClickerApp(ThemedTk):
         self.clear_button = ttk.Button(btn_frame, text="Clear Log", command=self.clear_log)
         self.clear_button.grid(row=0, column=2, sticky="ew", padx=5)
 
-        # Log textbox
         self.log_text = tk.Text(self, height=10, bg=GREY_DARK, fg=TEXT_COLOR, insertbackground=TEXT_COLOR,
                                 font=(FONT_NAME, FONT_SIZE), state="disabled", relief="flat")
         self.log_text.grid(row=11, column=0, columnspan=2, sticky="nsew", padx=10, pady=(0, 10))
 
-        # Configure grid weights
         self.grid_rowconfigure(11, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
     def toggle_burst_fields(self):
         continuous = self.continuous_mode.get()
         if continuous:
-            # Hide burst fields
             self.burst_label.grid_remove()
             self.burst_entry.grid_remove()
             self.pause_label.grid_remove()
             self.pause_entry.grid_remove()
         else:
-            # Show burst fields back at original grid positions
             self.burst_label.grid(row=4, column=0, sticky="w", padx=10, pady=6)
             self.burst_entry.grid(row=4, column=1, sticky="ew", padx=10, pady=6)
             self.pause_label.grid(row=5, column=0, sticky="w", padx=10, pady=6)
@@ -323,7 +303,6 @@ class MacroClickerApp(ThemedTk):
                 messagebox.showerror("Invalid input", "Burst pause duration must be a non-negative number.")
                 return
 
-        # Validate target input count
         try:
             target = int(self.target_input_count.get())
             if target < 0:
@@ -332,7 +311,6 @@ class MacroClickerApp(ThemedTk):
             messagebox.showerror("Invalid input", "Target input count must be zero or a positive integer.")
             return
 
-        # Validate key/mouse button input
         if self.input_mode.get() == "Keyboard":
             keys_str = self.key_sequence.get().strip()
             if not keys_str:
@@ -344,23 +322,19 @@ class MacroClickerApp(ThemedTk):
             if not btn_str:
                 messagebox.showerror("Invalid input", "Please select a mouse button to spam.")
                 return
-            # Map to int button
             try:
                 btn_num = int(btn_str.split(' ')[0])
             except Exception:
                 messagebox.showerror("Invalid input", "Invalid mouse button selection.")
                 return
 
-        # Reset state
         self.input_count = 0
         self.log(f"Starting spamming in {self.input_mode.get()} mode...")
         spamming = True
         self.start_button.config(state="disabled")
         self.stop_button.config(state="normal")
-
         self.stop_event.clear()
 
-        # Start spam thread
         if self.input_mode.get() == "Keyboard":
             self.spam_thread = threading.Thread(target=self.spam_keyboard,
                                                 args=(keys, delay, self.random_delay_mode.get(),
@@ -394,12 +368,9 @@ class MacroClickerApp(ThemedTk):
         try:
             keys_to_press = []
             for k in keys:
-                # Support special keys by name from keyboard.Key or just simple chars
                 try:
-                    # Check if it matches special key attribute
                     key_obj = getattr(keyboard.Key, k.lower())
                 except AttributeError:
-                    # Fallback to character
                     if len(k) == 1:
                         key_obj = k
                     else:
@@ -433,7 +404,6 @@ class MacroClickerApp(ThemedTk):
                             sleeptime = max(0, sleeptime)
                         time.sleep(sleeptime)
                 else:
-                    # Burst mode
                     for _ in range(burst_count):
                         for key in keys_to_press:
                             send_input(key)
@@ -509,7 +479,6 @@ class MacroClickerApp(ThemedTk):
             self.log(f"Error during mouse spamming: {e}")
         finally:
             self.stop_spamming()
-
 
 if __name__ == "__main__":
     app = MacroClickerApp()
